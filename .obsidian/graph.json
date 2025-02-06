@@ -1,0 +1,86 @@
+{
+  "collapse-filter": true,
+  "search": "path:(databases)  ",
+  "showTags": false,
+  "showAttachments": false,
+  "hideUnresolved": false,
+  "showOrphans": true,
+  "collapse-color-groups": true,
+  "colorGroups": [
+    {
+      "query": "file:!",
+      "color": {
+        "a": 1,
+        "rgb": 11396351
+      }
+    },
+    {
+      "query": "section:(/status:.+🟢done/)",
+      "color": {
+        "a": 1,
+        "rgb": 27433
+      }
+    },
+    {
+      "query": "section:(/status:.+child/)",
+      "color": {
+        "a": 1,
+        "rgb": 3707807
+      }
+    },
+    {
+      "query": "section:(/status:.+🟡blocked/)",
+      "color": {
+        "a": 1,
+        "rgb": 11119414
+      }
+    },
+    {
+      "query": "section:(/status:.+🔴not started/)",
+      "color": {
+        "a": 1,
+        "rgb": 16583949
+      }
+    },
+    {
+      "query": "section:(/status:.+🟣soon/)",
+      "color": {
+        "a": 1,
+        "rgb": 8529819
+      }
+    },
+    {
+      "query": "section:(/status:.+in progress/)",
+      "color": {
+        "a": 1,
+        "rgb": 2380031
+      }
+    },
+    {
+      "query": "path:knowleges",
+      "color": {
+        "a": 1,
+        "rgb": 16746496
+      }
+    },
+    {
+      "query": "path:people",
+      "color": {
+        "a": 1,
+        "rgb": 14701233
+      }
+    }
+  ],
+  "collapse-display": false,
+  "showArrow": true,
+  "textFadeMultiplier": -2.5,
+  "nodeSizeMultiplier": 1.68229166666667,
+  "lineSizeMultiplier": 4.0046875,
+  "collapse-forces": false,
+  "centerStrength": 0.510416666666667,
+  "repelStrength": 20,
+  "linkStrength": 1,
+  "linkDistance": 30,
+  "scale": 0.046357941493230276,
+  "close": false
+}

@@ -1,0 +1,17 @@
+{
+  "immediateReplace": true,
+  "suggester": true,
+  "historyPriority": true,
+  "historyLimit": 25,
+  "history": [
+    ":dart:",
+    ":link:",
+    ":ballot_box_with_check:",
+    ":exclamation:",
+    ":fire:",
+    ":rofl:",
+    ":b:",
+    ":3rd_place_medal:",
+    ":2nd_place_medal:"
+  ]
+}

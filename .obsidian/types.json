@@ -1,0 +1,16 @@
+{
+  "types": {
+    "aliases": "aliases",
+    "cssclasses": "multitext",
+    "tags": "tags",
+    "frequency": "text",
+    "selectedDay": "date",
+    "startDay": "date",
+    "date": "date",
+    "endRange": "date",
+    "Effort": "number",
+    "Impact": "number",
+    "Confidence": "number",
+    "deadline": "date"
+  }
+}

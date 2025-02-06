@@ -1,0 +1,7 @@
+{
+  "byWindow": "all",
+  "switch": true,
+  "noEmptyTabs": true,
+  "enableCST": true,
+  "beNotified": true
+}

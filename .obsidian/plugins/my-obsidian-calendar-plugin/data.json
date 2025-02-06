@@ -1,0 +1,77 @@
+{
+  "statusCorrector": {
+    "isOn": true,
+    "startOnStartUp": true
+  },
+  "calendar": {
+    "slotDuration": "00:30:00",
+    "colours": {
+      "frequency": "#8A1717",
+      "done": "#008E04",
+      "tick": "#457E7E",
+      "default": "#5e3fa8"
+    },
+    "restTime": [
+      {
+        "daysOfWeek": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "0"
+        ],
+        "display": "background",
+        "startTime": "0:00:00",
+        "endTime": "8:00:00",
+        "color": "#cc0000"
+      },
+      {
+        "daysOfWeek": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "0"
+        ],
+        "display": "background",
+        "startTime": "24:00:00",
+        "endTime": "24:00:00",
+        "color": "#cc0000"
+      },
+      {
+        "daysOfWeek": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "0"
+        ],
+        "display": "background",
+        "startTime": "0:00:00",
+        "endTime": "8:30:00",
+        "color": "#305B60"
+      },
+      {
+        "daysOfWeek": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "0"
+        ],
+        "display": "background",
+        "startTime": "23:00:00",
+        "endTime": "24:00:00",
+        "color": "#305B60"
+      }
+    ]
+  }
+}

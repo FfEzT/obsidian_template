@@ -1,0 +1,43 @@
+{
+  "newFileLocation": "current",
+  "attachmentFolderPath": "src",
+  "alwaysUpdateLinks": true,
+  "showUnsupportedFiles": true,
+  "newLinkFormat": "shortest",
+  "useMarkdownLinks": false,
+  "showLineNumber": true,
+  "defaultViewMode": "preview",
+  "mobileToolbarCommands": [
+    "editor:move-caret-up",
+    "editor:move-caret-down",
+    "editor:swap-line-down",
+    "editor:swap-line-up",
+    "editor:indent-list",
+    "editor:unindent-list",
+    "editor:delete-paragraph",
+    "editor:undo",
+    "editor:redo",
+    "insert-current-date",
+    "editor:fold-all",
+    "editor:unfold-all",
+    "editor:insert-link",
+    "editor:attach-file",
+    "editor:toggle-source",
+    "datepicker:insert-date"
+  ],
+  "trashOption": "none",
+  "rightToLeft": false,
+  "vimMode": false,
+  "mobilePullAction": "command-palette:open",
+  "pdfExportSettings": {
+    "includeName": true,
+    "pageSize": "Letter",
+    "landscape": false,
+    "margin": "0",
+    "downscalePercent": 100
+  },
+  "readableLineLength": true,
+  "userIgnoreFilters": [
+    "script/"
+  ]
+}
