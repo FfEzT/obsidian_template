@@ -44,11 +44,48 @@ function convertDvToTarr(t) {
     return res
 }
 
+const currentDv = dv.current()
+
+
+// GET blocks
+let blockers = dv.pages("[[#]]")
+.where(
+    page => {
+        if (page.blocks?.find)
+            return page.blocks.find(el => el.path == currentDv.file.path)
+
+        return page.blocks?.path == currentDv.file.path
+    }
+)
+.sort(p => p.status).sort(p => p.date)
+.array()
+
+const result_block = []
+for (let blocker of blockers) {
+    result_block.push(
+        [blocker.file.link, blocker.date, blocker.status, blocker.progress?.replace("current()", "page('" + blocker.file.path + "')")]
+    )
+}
+// END GET blocks
+
+
+
+
+// GET others inlinks
 let pages = dv.pages("[[#]]")
+// .where(
+//     page => {
+//         console.log(page.parent)
+//         if (page.parent?.find)
+//             return page.parent.find(el => el.path == currentDv.file.path)
+
+//         return page.parent?.path == currentDv.file.path
+//     }
+// )
 .sort(p => p.status)
 .array()
 
-const result = []
+let result = []
 
 let currentPage = dv.current()
 if (currentPage.t) {
@@ -72,7 +109,34 @@ result.sort(
     (a,b) => a[1] < b[1]? -1:1
 )
 
+
+// END GET other inlinks
+
+// remove blockers from result
+let tempResult = []
+for (let i of result) {
+    index = result_block.find(
+        el => el[0].path == i[0].path
+    )
+
+    if (index)
+        continue
+
+    tempResult.push(i)
+}
+result = tempResult
+
+
+
+
+// RENDER
 dv.table(
-    ["File", "date", "status", "progress"],
+    ["children", "date", "status", "progress"],
     result
 )
+
+if (result_block.length)
+    dv.table(
+        ["blocker", "date", "status", "progress"],
+        result_block
+    )

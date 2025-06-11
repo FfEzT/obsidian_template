@@ -54,6 +54,7 @@ const currentDv = dv.current()
 let pages = dv.pages()
 .where(
     page => page.file.path.startsWith(currentDv.file.folder)
+        && !page.status?.contains("done")
 )
 .sort(p => p.status)
 .array()
@@ -63,7 +64,7 @@ const result = []
 for (let page of pages) {
     if (checkCond(page)) {
         result.push(
-            [page.file.link, page.status, page.date, page.frequency]
+            [page.file.link, page.status, page.date, page.timeStart, page.duration, page.frequency]
         )
     }
     if (page.t) {
@@ -72,7 +73,7 @@ for (let page of pages) {
 
         for (let i of tmp) {
             result.push(
-                ["("+page.file.link+")"+i.name, page.status, i.date, ""]
+                ["("+page.file.link+")"+i.name, page.status, i.date, i.timeStart, i.duration, ""]
             )
         }
     }
@@ -83,6 +84,6 @@ result.sort(
 )
 
 dv.table(
-    ["File", "status", "date", "frequency"],
+    ["File", "status", "date", "timeStart", "duration", "frequency"],
     result
 )

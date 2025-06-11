@@ -49,33 +49,33 @@ function haveDate(obj) {
 }
 
 function checkFile(obj) {
-    return !haveDate(obj) && (
-        obj.status != "🟡blocked" ||
-        obj.file?.tasks.fullyCompleted.includes(false) ||
-        obj.file?.inlinks.length == 0
-    )
+    // return !haveDate(obj) &&
+    //     !(obj.status == "🟡blocked" &&
+    //             !obj.file?.tasks.fullyCompleted.includes(false) &&
+    //             obj.file?.inlinks.length != 0)
 
-    // if (haveDate(obj))
-    //   return false
+    if (haveDate(obj))
+        return false
 
-    // if (obj.file?.inlinks.length == 0)
-    //   return true
+    if (obj.file?.inlinks.length == 0)
+        return true
 
     // if (obj.file?.tasks.fullyCompleted.includes(false))
     //   return true
 
-    // const child = obj.file.inlinks.array()
-    // for (let children of child) {
-    //   const tmp = dv.page(children.path).status
+    const child = obj.file.inlinks.array()
+    for (let children of child) {
+        const tmp = dv.page(children.path).status
 
-    //   if (!tmp)
-    //       continue
-    //   // NOTE Если есть дети не Done
-    //   if (!tmp.includes("done"))
-    //       return false
-    // }
+        if (!tmp)
+            continue
 
-    // return true
+        // NOTE Если есть дети не Done
+        if (!tmp.includes("done"))
+            return false
+    }
+
+    return true
 }
 
 const currentDv = dv.current()

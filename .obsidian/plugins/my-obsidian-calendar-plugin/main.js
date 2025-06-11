@@ -9341,14 +9341,14 @@ var require_ical = __commonJS({
       var PROPERTY_INDEX = 1;
       var COMPONENT_INDEX = 2;
       var NAME_INDEX = 0;
-      function Component2(jCal, parent) {
+      function Component3(jCal, parent) {
         if (typeof jCal === "string") {
           jCal = [jCal, [], []];
         }
         this.jCal = jCal;
         this.parent = parent || null;
       }
-      Component2.prototype = {
+      Component3.prototype = {
         /**
          * Hydrated properties are inserted into the _properties array at the same
          * position as in the jCal array, so it is possible that the array contains
@@ -9392,7 +9392,7 @@ var require_ical = __commonJS({
           if (this._components[index8]) {
             return this._components[index8];
           }
-          var comp = new Component2(
+          var comp = new Component3(
             this.jCal[COMPONENT_INDEX][index8],
             this
           );
@@ -9737,10 +9737,10 @@ var require_ical = __commonJS({
           );
         }
       };
-      Component2.fromString = function(str) {
-        return new Component2(ICAL2.parse.component(str));
+      Component3.fromString = function(str) {
+        return new Component3(ICAL2.parse.component(str));
       };
-      return Component2;
+      return Component3;
     }();
     ICAL2.Property = function() {
       "use strict";
@@ -14633,13 +14633,13 @@ __export(main_exports, {
   default: () => MyPlugin
 });
 module.exports = __toCommonJS(main_exports);
-var import_obsidian5 = require("obsidian");
+var import_obsidian7 = require("obsidian");
 
-// src/view.ts
+// src/CalendarView.ts
 var import_obsidian = require("obsidian");
 
 // src/constants.ts
-var MSG_PLG_NAME = "MyCalendar: ";
+var MSG_PLG_NAME = "MyCalendar";
 var daysOfWeek = ["1", "2", "3", "4", "5", "6", "0"];
 var display = "background";
 var COLOUR_REST = "#305B60";
@@ -14940,13 +14940,11 @@ async function getProgress(plg, page) {
     result.all += tasks.all;
     result.done += tasks.done;
     const inlinks = meta.file.inlinks.array();
-    // if (inlinks.length == 0) {
-      if (page2.status) {
-        ++result.all;
-        if (page2.status == TEXT_DONE)
-          ++result.done;
-      }
-    // }
+    if (page2.status) {
+      ++result.all;
+      if (page2.status == TEXT_DONE)
+        ++result.done;
+    }
     for (let inlink of inlinks) {
       if (pages.has(inlink.path))
         continue;
@@ -14975,6 +14973,10 @@ async function getParentNote(page) {
     result.push(dv.page(outlink.path));
   }
   return result;
+}
+function safeParseInt(str) {
+  const num = Number(str);
+  return Number.isInteger(num) ? num : NaN;
 }
 
 // node_modules/@fullcalendar/core/node_modules/preact/dist/preact.module.js
@@ -31755,14 +31757,13 @@ function renderCalendar(containerEl, eventSources, settings) {
     nowIndicator: true,
     scrollTimeReset: false,
     dayMaxEvents: true,
-    // TODO add to const
     expandRows: true,
     slotDuration: (settings == null ? void 0 : settings.slotDuration) || "00:30:00",
     // multiMonthMaxColumns: 1,
     headerToolbar: !isNarrow ? {
       left: "prev,next today",
       center: "title",
-      right: "dayGridMonth,timeGridWeek,listWeek,dayGridYear"
+      right: "timeGrid5Days,timeGridWeek,listWeek,dayGridMonth,dayGridYear"
     } : !isMobile ? {
       right: "today,prev,next",
       left: "dayGridMonth,timeGrid3Days,listWeek,dayGridYear"
@@ -31776,6 +31777,11 @@ function renderCalendar(containerEl, eventSources, settings) {
         type: "timeGrid",
         duration: { days: 3 },
         buttonText: "3"
+      },
+      timeGrid5Days: {
+        type: "timeGrid",
+        duration: { days: 5 },
+        buttonText: "5"
       },
       dayGridMonth: {
         dayMaxEvents: false
@@ -31851,7 +31857,7 @@ function renderCalendar(containerEl, eventSources, settings) {
   return cal;
 }
 
-// src/view.ts
+// src/CalendarView.ts
 var VIEW_TYPE = "my-obsidian-calendar-plugin";
 var CalendarView = class extends import_obsidian.ItemView {
   constructor(leaf, idForCache, event_src, parrentPointer) {
@@ -31880,13 +31886,17 @@ var CalendarView = class extends import_obsidian.ItemView {
     (_a = this.calendar) == null ? void 0 : _a.render();
   }
   addFile(page) {
+    var _a;
     const events = this.pageToEvents(page);
     for (let event of events)
-      this.calendar.addEvent(event);
+      (_a = this.calendar) == null ? void 0 : _a.addEvent(event);
   }
   changeFile(newPage, oldPage) {
+    var _a, _b;
+    (_a = this.calendar) == null ? void 0 : _a.pauseRendering();
     this.deleteFile(oldPage);
     this.addFile(newPage);
+    (_b = this.calendar) == null ? void 0 : _b.resumeRendering();
   }
   renameFile(newPage, oldPage) {
     this.changeFile(newPage, oldPage);
@@ -31932,10 +31942,11 @@ var CalendarView = class extends import_obsidian.ItemView {
     this.calendar.setOption("weekNumbers", true);
     window.setTimeout(
       (_3) => {
+        var _a, _b;
         if (import_obsidian.Platform.isMobile)
-          this.calendar.changeView("timeGrid3Days");
+          (_a = this.calendar) == null ? void 0 : _a.changeView("timeGrid3Days");
         else
-          this.calendar.changeView("timeGridWeek");
+          (_b = this.calendar) == null ? void 0 : _b.changeView("timeGridWeek");
       },
       1
     );
@@ -32011,8 +32022,8 @@ var CalendarView = class extends import_obsidian.ItemView {
     const structureTemplate = {
       id: "",
       title: "",
-      color: getColourFromPath(page.file.path),
       borderColor: colours.default,
+      color: getColourFromPath(page.file.path),
       editable: true
     };
     if (page.date) {
@@ -32069,8 +32080,11 @@ var nameModal = class extends import_obsidian.Modal {
 };
 
 // src/cache.ts
+var import_obsidian2 = require("obsidian");
 var Cache2 = class {
-  constructor(parrentPointer) {
+  // TODO fix: fileManager is unused since it can be found in MyPlugin
+  // but first off, init FileManager, then Cache
+  constructor(parrentPointer, fileManager) {
     this.storage = /* @__PURE__ */ new Map();
     this.subscribers = /* @__PURE__ */ new Map();
     this.initSync = new Promise(
@@ -32183,20 +32197,29 @@ var Cache2 = class {
   }
   async initStorage() {
     const tFiles = this.parrentPointer.app.vault.getMarkdownFiles();
-    for (let tFile of tFiles) {
+    const notice = new import_obsidian2.Notice(
+      `${MSG_PLG_NAME}: there are ${tFiles.length} notes`,
+      1e3 * 60
+      // 60 seconds
+    );
+    for (let i3 in tFiles) {
+      const tFile = tFiles[i3];
+      notice.setMessage(`${MSG_PLG_NAME}: (${i3}/${tFiles.length}) added ${tFile.path}`);
       this.storage.set(
         tFile.path,
         await this.parrentPointer.fileManager.getPage(tFile)
       );
     }
+    notice.hide();
+    new import_obsidian2.Notice(`${MSG_PLG_NAME}: cache has been inited`);
     this.initSyncResolve();
     this.isInited = true;
   }
 };
 
 // src/setting.ts
-var import_obsidian2 = require("obsidian");
-var MySettingTab = class extends import_obsidian2.PluginSettingTab {
+var import_obsidian3 = require("obsidian");
+var MySettingTab = class extends import_obsidian3.PluginSettingTab {
   constructor(app, plugin) {
     super(app, plugin);
     this.plugin = plugin;
@@ -32205,20 +32228,20 @@ var MySettingTab = class extends import_obsidian2.PluginSettingTab {
     let { containerEl } = this;
     containerEl.empty();
     const settings = this.plugin.getSettings();
-    new import_obsidian2.Setting(containerEl).setHeading().setName("It's recommended to reload ObsidianApp after changing the settings");
-    new import_obsidian2.Setting(containerEl).addButton(
+    new import_obsidian3.Setting(containerEl).setHeading().setName("It's recommended to reload ObsidianApp after changing the settings");
+    new import_obsidian3.Setting(containerEl).addButton(
       (btn) => {
         btn.setButtonText("Set Default Values").onClick(
           () => {
             this.plugin.saveSettings(DEFAULT_SETTINGS);
-            new import_obsidian2.Notice(MSG_PLG_NAME + "The default settings has been applied");
+            new import_obsidian3.Notice(MSG_PLG_NAME + "The default settings has been applied");
           }
         );
       }
     );
-    new import_obsidian2.Setting(containerEl).setHeading();
-    new import_obsidian2.Setting(containerEl).setName("Calendar").setHeading();
-    new import_obsidian2.Setting(containerEl).setName("Slot duration").setDesc(`Default: ${DEFAULT_SETTINGS.calendar.slotDuration}`).addText(
+    new import_obsidian3.Setting(containerEl).setHeading();
+    new import_obsidian3.Setting(containerEl).setName("Calendar").setHeading();
+    new import_obsidian3.Setting(containerEl).setName("Slot duration").setDesc(`Default: ${DEFAULT_SETTINGS.calendar.slotDuration}`).addText(
       (component) => {
         component.setPlaceholder("hh:mm:ss").setValue(settings.calendar.slotDuration).onChange(
           (value) => {
@@ -32228,7 +32251,7 @@ var MySettingTab = class extends import_obsidian2.PluginSettingTab {
         );
       }
     );
-    new import_obsidian2.Setting(containerEl).setName("Colours").setHeading();
+    new import_obsidian3.Setting(containerEl).setName("Colours").setHeading();
     for (let key of Object.keys(settings.calendar.colours)) {
       this.addColourSetting(
         containerEl,
@@ -32241,7 +32264,7 @@ var MySettingTab = class extends import_obsidian2.PluginSettingTab {
         }
       );
     }
-    new import_obsidian2.Setting(containerEl).setName("RestTime").setHeading();
+    new import_obsidian3.Setting(containerEl).setName("RestTime").setHeading();
     for (let index8 in settings.calendar.restTime) {
       const el = settings.calendar.restTime[index8];
       let name = "";
@@ -32251,7 +32274,7 @@ var MySettingTab = class extends import_obsidian2.PluginSettingTab {
         name = "Sleep time";
       } else
         continue;
-      new import_obsidian2.Setting(containerEl).setName(`Start of ${name} (${index8})`).addText(
+      new import_obsidian3.Setting(containerEl).setName(`Start of ${name} (${index8})`).addText(
         (text) => {
           text.setValue(el.startTime).setPlaceholder("hh:mm:ss").onChange(
             (val) => {
@@ -32261,7 +32284,7 @@ var MySettingTab = class extends import_obsidian2.PluginSettingTab {
           );
         }
       );
-      new import_obsidian2.Setting(containerEl).setName(`End of ${name} (${index8})`).addText(
+      new import_obsidian3.Setting(containerEl).setName(`End of ${name} (${index8})`).addText(
         (text) => {
           text.setValue(el.endTime).setPlaceholder("hh:mm:ss").onChange(
             (val) => {
@@ -32272,10 +32295,10 @@ var MySettingTab = class extends import_obsidian2.PluginSettingTab {
         }
       );
     }
-    new import_obsidian2.Setting(containerEl).setHeading();
-    new import_obsidian2.Setting(containerEl).setName("StatusCorrector").setHeading();
+    new import_obsidian3.Setting(containerEl).setHeading();
+    new import_obsidian3.Setting(containerEl).setName("StatusCorrector").setHeading();
     const statusCorrector = settings.statusCorrector.isOn;
-    new import_obsidian2.Setting(containerEl).setName("Enable tool").addToggle(
+    new import_obsidian3.Setting(containerEl).setName("Enable tool").addToggle(
       (toggle) => toggle.setValue(statusCorrector).onChange(
         (value) => {
           settings.statusCorrector.isOn = value;
@@ -32285,7 +32308,7 @@ var MySettingTab = class extends import_obsidian2.PluginSettingTab {
       )
     );
     if (statusCorrector) {
-      new import_obsidian2.Setting(containerEl).setName("Start on Start Up").addToggle(
+      new import_obsidian3.Setting(containerEl).setName("Start on Start Up").addToggle(
         (toggle) => toggle.setValue(settings.statusCorrector.startOnStartUp).onChange(
           (val) => {
             settings.statusCorrector.startOnStartUp = val;
@@ -32296,7 +32319,7 @@ var MySettingTab = class extends import_obsidian2.PluginSettingTab {
     }
   }
   addColourSetting(containerEl, name, defaultValue, currentValue, callback) {
-    new import_obsidian2.Setting(containerEl).setName(name).setDesc(`Default: ${defaultValue}`).addText(
+    new import_obsidian3.Setting(containerEl).setName(name).setDesc(`Default: ${defaultValue}`).addText(
       (component) => {
         component.setPlaceholder("#0f0f0f").setValue(currentValue).onChange((val) => callback(val));
       }
@@ -32305,7 +32328,7 @@ var MySettingTab = class extends import_obsidian2.PluginSettingTab {
 };
 
 // src/statusCorrector.ts
-var import_obsidian3 = require("obsidian");
+var import_obsidian4 = require("obsidian");
 var StatusCorrector = class {
   constructor(idForCache, event_src, parrentPointer) {
     this.subscribed = false;
@@ -32400,8 +32423,8 @@ var StatusCorrector = class {
     return true;
   }
   async correctAllNotes() {
-    const notice = new import_obsidian3.Notice(
-      MSG_PLG_NAME + "Start checking status of notes",
+    const notice = new import_obsidian4.Notice(
+      MSG_PLG_NAME + ": Start checking status of notes",
       1e3 * 60
       // 60 seconds
     );
@@ -32434,12 +32457,12 @@ var StatusCorrector = class {
         )
       );
     }
-    notice.setMessage(MSG_PLG_NAME + "Status of Notes has been checked");
+    notice.setMessage(MSG_PLG_NAME + ": Status of Notes has been checked");
     setTimeout(
       () => notice.hide(),
       3e3
     );
-    new import_obsidian3.Notice("StatusCorrector: Notes has been checked");
+    new import_obsidian4.Notice(`${MSG_PLG_NAME}: Notes has been checked`);
   }
   destroy() {
     this.parent.cache.unsubscribe(this.idForCache);
@@ -32465,7 +32488,7 @@ var StatusCorrector = class {
       const isChanged = await this.correctNote(page2);
       if (!isChanged && page2.status == oldPage.status)
         continue;
-      new import_obsidian3.Notice(
+      new import_obsidian4.Notice(
         `${page2.file.name} - change status: ${oldStatus} => ${page2.status}`
       );
       const child = await getParentNote(page2);
@@ -32483,14 +32506,14 @@ var StatusCorrector = class {
 };
 
 // src/fileManager.ts
-var import_obsidian4 = require("obsidian");
+var import_obsidian5 = require("obsidian");
 var FileManager = class {
   constructor(plg) {
     this.app = plg.app;
   }
   async createFile(path) {
     await this.app.vault.create(path, "");
-    new import_obsidian4.Notice(MSG_PLG_NAME + "created " + path);
+    new import_obsidian5.Notice(MSG_PLG_NAME + "created " + path);
   }
   async changePropertyFile(path, event) {
     const tFile = this.app.metadataCache.getFirstLinkpathDest(path, "");
@@ -32588,18 +32611,65 @@ var FileManager = class {
       }
     return result;
   }
+  async getText(path) {
+    const tFile = this.app.metadataCache.getFirstLinkpathDest(path, "");
+    const text = await this.app.vault.read(tFile);
+    return text;
+  }
+  async setText(path, text) {
+    const tFile = this.app.metadataCache.getFirstLinkpathDest(path, "");
+    await this.app.vault.modify(tFile, text);
+  }
+};
+
+// src/TickCheker.ts
+var import_obsidian6 = require("obsidian");
+var TickChecker = class {
+  constructor(idForCache, event_src, ptr) {
+    this.parent = ptr;
+    this.idForCache = idForCache;
+    this.parent.cache.subscribe(idForCache, event_src, this).then((data) => this.process(data));
+  }
+  async process(pages) {
+    for (let page of pages) {
+      for (let tick of page.ticks) {
+        if (isNaN(safeParseInt(tick.name)))
+          continue;
+        let text = await this.parent.fileManager.getText(page.file.path);
+        const regExp = new RegExp(`\\[t::\\s*${tick.name}(,[^\\]]*|)\\]`, "gm");
+        await this.parent.fileManager.setText(
+          page.file.path,
+          text.replace(regExp, `[t::${tick.name}_$1]`)
+        );
+        new import_obsidian6.Notice(MSG_PLG_NAME + `change tickname in ${page.file.name}: ${tick.name}`);
+      }
+    }
+    this.parent.cache.unsubscribe(this.idForCache);
+  }
+  renameFile(newPage, oldPage) {
+  }
+  deleteFile(page) {
+  }
+  addFile(page) {
+  }
+  changeFile(newPage, oldPage) {
+  }
+  reset() {
+  }
 };
 
 // src/main.ts
-var MyPlugin = class extends import_obsidian5.Plugin {
+var MyPlugin = class extends import_obsidian7.Plugin {
   constructor(app, manifest) {
     super(app, manifest);
-    this.fileManager = new FileManager(this);
-    this.cache = new Cache2(this);
+    const fileManager = new FileManager(this);
+    this.fileManager = fileManager;
+    this.cache = new Cache2(this, fileManager);
   }
   async onload() {
     await this.loadSettings();
     this.initRegister();
+    await new TickChecker(3 /* TICK_CHECKER */, [EVENT_SRC], this);
     if (this.settings.statusCorrector.isOn) {
       this.statusCorrector = new StatusCorrector(2 /* STATUS_CORRECTOR */, [EVENT_SRC], this);
       if (this.settings.statusCorrector.startOnStartUp)

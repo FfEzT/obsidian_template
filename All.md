@@ -32,7 +32,7 @@ WHERE t
 TABLE status, date, frequency, parent,
 	file.inlinks AS Дети
 FROM "databases"
-WHERE contains(status, "in progress")
 SORT status ASC, date ASC, timeStart
 ```
+WHERE contains(status, "in progress")
 ---
